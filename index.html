@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Prediction</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Prediction</h1>
+
+        <!-- Form Section -->
+        <form method="POST" action="/predict" id="predictionForm">
+            <div class="input-group">
+                <label for="ticker">Enter Stock Ticker (e.g. AAPL, MSFT, TSLA):</label>
+                <input 
+                    type="text" 
+                    id="ticker" 
+                    name="ticker" 
+                    required 
+                    placeholder="Enter a valid stock ticker" />
+            </div>
+            <button type="submit" class="btn">Predict</button>
+        </form>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="spinner" style="display: none;">
+            <div class="loader"></div>
+            <p>Generating predictions...</p>
+        </div>
+
+        <!-- Display Error Messages -->
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <!-- Display Predictions -->
+        {% if lr_prediction and lstm_prediction %}
+        <div class="results">
+            <h2>Predictions for {{ stock_ticker }}:</h2>
+            <p><strong>Linear Regression Prediction:</strong> ${{ lr_prediction }}</p>
+            <p><strong>LSTM Prediction:</strong> ${{ lstm_prediction }}</p>
+
+            <h3>Accuracy Comparison:</h3>
+            <p><strong>Linear Regression MAE:</strong> {{ lr_mae }}</p>
+            <p><strong>LSTM MAE:</strong> {{ lstm_mae }}</p>
+
+            <!-- Display Graphs -->
+            <h3>Stock Price Predictions Comparison</h3>
+            <h4>Original vs Linear Regression Prediction:</h4>
+            <img src="data:image/png;base64,{{ plot_url2 }}" alt="Linear Regression Prediction" />
+
+            <h4>Original vs LSTM Prediction:</h4>
+            <img src="data:image/png;base64,{{ plot_url3 }}" alt="LSTM Prediction" />
+
+            <h4>Original Stock Prices:</h4>
+            <img src="data:image/png;base64,{{ plot_url1 }}" alt="Original Stock Prices" />
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Script for Spinner -->
+    <script>
+        const form = document.getElementById("predictionForm");
+        const spinner = document.getElementById("loadingSpinner");
+
+        form.addEventListener("submit", function() {
+            spinner.style.display = "block"; // Show spinner while processing predictions
+        });
+    </script>
+</body>
+</html>
